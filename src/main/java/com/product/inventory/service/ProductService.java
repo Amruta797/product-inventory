@@ -15,7 +15,7 @@ public interface ProductService {
 
     List<Product> searchByName(String name);
 
-    Product updateQuantity(Long id, int quantity);
+    Product updateQuantity(Long id, Integer quantity);
 
     void deleteProduct(Long id);
 

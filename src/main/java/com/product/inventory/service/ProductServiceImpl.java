@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateQuantity(Long id, int quantity) {
+    public Product updateQuantity(Long id, Integer quantity) {
         Product product = repo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         product.setQuantity(quantity);
