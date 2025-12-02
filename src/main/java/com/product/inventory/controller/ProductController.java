@@ -67,7 +67,7 @@ public class ProductController {
     public ResponseEntity<Product> updateProductQuantity(
             @PathVariable Long id,
             @RequestParam Integer quantity) {
-        if (!productService.existsById(id)) {
+        if (productService.existsById(id)) {
             throw new ResourceNotFoundException("Product not found");
         }
         Product updated = productService.updateQuantity(id, quantity);
@@ -82,7 +82,7 @@ public class ProductController {
     // DELETE /products/{id} – Delete product
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
-        if (!productService.existsById(id)) {
+        if (productService.existsById(id)) {
             throw new ResourceNotFoundException("Product not found");
         }
         productService.deleteProduct(id);

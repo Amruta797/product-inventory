@@ -5,6 +5,7 @@ import com.product.inventory.product.Product;
 import com.product.inventory.repositoty.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public boolean existsById(Long id) {
-        return repo.existsById(id);
+        return !repo.existsById(id);
     }
 
     @Override
@@ -48,6 +49,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long id) {
+        if(existsById(id)){
+            throw new ResourceNotFoundException("Product not found");
+        }
         repo.deleteById(id);
     }
 
@@ -56,17 +60,15 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = repo.findAll();
 
         int totalProducts = products.size();
-        Map<String, Object> outOfStock = new HashMap<>();
+        List<Object> outOfStock = new ArrayList<>();
+
         int totalQuantity = 0;
         double totalPrice = 0.0;
 
         for(Product product : products) {
             totalQuantity += product.getQuantity();
             totalPrice += product.getPrice();
-            if (isOutOfStock(product)) {
-                outOfStock.put("id", product.getId());
-                outOfStock.put("name", product.getName());
-            }
+            populateOutOfStock(product, outOfStock);
         }
 
         Map<String, Object> summary = new HashMap<>();
@@ -84,6 +86,15 @@ public class ProductServiceImpl implements ProductService {
 
     private boolean isOutOfStock(Product product) {
         return product.getQuantity() <= 0;
+    }
+
+    private void populateOutOfStock(Product product, List<Object> outOfStock) {
+        if (isOutOfStock(product)) {
+            Map<String, Object> outOfStockProduct = new HashMap<>();
+            outOfStockProduct.put("id", product.getId());
+            outOfStockProduct.put("name", product.getName());
+            outOfStock.add(outOfStockProduct);
+        }
     }
 
 }
