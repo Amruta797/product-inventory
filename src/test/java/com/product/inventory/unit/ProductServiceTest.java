@@ -1,6 +1,6 @@
 package com.product.inventory.unit;
 
-import com.product.inventory.product.Product;
+import com.product.inventory.model.Product;
 import com.product.inventory.repositoty.ProductRepository;
 import com.product.inventory.service.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;

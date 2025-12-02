@@ -1,7 +1,7 @@
 package com.product.inventory.integration;
 
 import com.product.inventory.TestPostgresContainer;
-import com.product.inventory.product.Product;
+import com.product.inventory.model.Product;
 import com.product.inventory.repositoty.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

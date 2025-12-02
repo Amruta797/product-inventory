@@ -1,7 +1,7 @@
 package com.product.inventory.integration;
 
 import com.product.inventory.TestPostgresContainer;
-import com.product.inventory.product.Product;
+import com.product.inventory.model.Product;
 import com.product.inventory.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

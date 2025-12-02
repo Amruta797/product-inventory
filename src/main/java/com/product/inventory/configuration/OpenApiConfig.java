@@ -5,6 +5,11 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration for openAPI/Swagger.
+ * This will add title, version and description to
+ * http://localhost:8080/swagger-ui/index.html page
+ */
 @Configuration
 public class OpenApiConfig {
     @Bean

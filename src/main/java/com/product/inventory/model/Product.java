@@ -1,4 +1,4 @@
-package com.product.inventory.product;
+package com.product.inventory.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -34,15 +34,35 @@ public class Product {
         this.price = price;
     }
 
-    public Long getId() {return id;}
-    public void setId(Long id) {this.id = id;}
+    public Long getId() {
+        return id;
+    }
 
-    public String getName() {return name;}
-    public void setName(String name) {this.name = name;}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Integer getQuantity() {return quantity;}
-    public void setQuantity(Integer quantity) {this.quantity = quantity;}
+    public String getName() {
+        return name;
+    }
 
-    public Double getPrice() {return price;}
-    public void setPrice(Double price) {this.price = price;}
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 }

@@ -1,6 +1,6 @@
 package com.product.inventory.service;
 
-import com.product.inventory.product.Product;
+import com.product.inventory.model.Product;
 
 import java.util.List;
 import java.util.Map;
