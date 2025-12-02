@@ -14,7 +14,6 @@
 	<name>inventory</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>25</java.version>
         <testcontainers.version>1.19.7</testcontainers.version>
         <spring.boot.version>4.0.0</spring.boot.version>
     </properties>
