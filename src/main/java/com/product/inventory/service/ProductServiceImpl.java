@@ -1,11 +1,14 @@
 package com.product.inventory.service;
 
 import com.product.inventory.exception.ResourceNotFoundException;
+import com.product.inventory.model.OutOfStockProduct;
 import com.product.inventory.model.Product;
 import com.product.inventory.repositoty.ProductRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import org.springframework.data.domain.Pageable;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +41,9 @@ public class ProductServiceImpl implements ProductService {
      * @return All products in inventory
      */
     @Override
-    public List<Product> getAllProducts() {
-        return repo.findAll();
+    public List<Product> getAllProducts(Pageable pageable) {
+        Page<Product> page = repo.findAll(pageable);
+        return page.getContent();
     }
 
     @Override
@@ -99,57 +103,23 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Map<String, Object> getInventorySummary() {
-        List<Product> products = repo.findAll();
+        long totalProducts = repo.countProducts();
+        long totalQuantity = repo.sumQuantities();
+        double averagePrice = repo.averagePrice();
+        List<OutOfStockProduct> outOfStock = repo.findByQuantity(0);
 
-        int totalProducts = products.size();
-        List<Object> outOfStock = new ArrayList<>();
-
-        int totalQuantity = 0;
-        double totalPrice = 0.0;
-
-        for (Product product : products) {
-            totalQuantity += product.getQuantity();
-            totalPrice += product.getPrice();
-            populateOutOfStock(product, outOfStock);
-        }
-
-        return generateSummaryMap(totalProducts, totalQuantity, totalPrice, outOfStock);
-    }
-
-    /**
-     * Average price of a product depending upon total price and total number of products
-     */
-    private double getAveragePrice(double totalPrice, int totalProducts) {
-        return totalPrice / totalProducts;
-    }
-
-    /**
-     * Returns true when Product quantity is 0, otherwise false
-     */
-    private boolean isOutOfStock(Product product) {
-        return product.getQuantity() <= 0;
-    }
-
-    /**
-     * Updates list of out of stock products. Product is out of stock when its quantity is 0
-     */
-    private void populateOutOfStock(Product product, List<Object> outOfStock) {
-        if (isOutOfStock(product)) {
-            Map<String, Object> outOfStockProduct = new HashMap<>();
-            outOfStockProduct.put("id", product.getId());
-            outOfStockProduct.put("name", product.getName());
-            outOfStock.add(outOfStockProduct);
-        }
+        return generateSummaryMap(totalProducts, totalQuantity, averagePrice, outOfStock);
     }
 
     /**
      * Creates summary map from given parameters
      */
-    private Map<String, Object> generateSummaryMap(int totalProducts, int totalQuantity, double totalPrice, List<Object> outOfStock) {
+    private Map<String, Object> generateSummaryMap(long totalProducts, long totalQuantity, double averagePrice,
+                                                   List<OutOfStockProduct> outOfStock) {
         Map<String, Object> summary = new HashMap<>();
         summary.put("totalProducts", totalProducts);
         summary.put("totalQuantity", totalQuantity);
-        summary.put("averagePrice", getAveragePrice(totalPrice, totalProducts));
+        summary.put("averagePrice", averagePrice);
         summary.put("outOfStock", outOfStock);
         return summary;
     }

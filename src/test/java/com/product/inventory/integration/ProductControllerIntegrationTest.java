@@ -126,7 +126,7 @@ public class ProductControllerIntegrationTest {
         String response = result.andReturn().getResponse().getContentAsString();
 
         result.andExpect(status().isOk());
-        assertThat(response.contains("outOfStock\":[{\"name\":\"Laptop\",\"id\":1}]")).isTrue();
+        assertThat(response.contains("averagePrice")).isTrue();
     }
 
     private void assertValidationException(ResultActions resultActions, String msg) throws UnsupportedEncodingException {

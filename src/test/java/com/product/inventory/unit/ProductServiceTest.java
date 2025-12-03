@@ -1,5 +1,6 @@
 package com.product.inventory.unit;
 
+import com.product.inventory.model.OutOfStockProduct;
 import com.product.inventory.model.Product;
 import com.product.inventory.repositoty.ProductRepository;
 import com.product.inventory.service.ProductServiceImpl;
@@ -7,10 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -112,16 +110,26 @@ public class ProductServiceTest {
 
     @Test
     public void testGetSummary() {
-        List<Product> products = List.of(product);
-        when(repository.findAll()).thenReturn(products);
+        List<OutOfStockProduct> outOfStock = new ArrayList<>();
+        outOfStock.add(new OutOfStockProduct(1L, "Laptop"));
+
+        when(repository.sumQuantities()).thenReturn(Long.valueOf(product.getQuantity()));
+        when(repository.averagePrice()).thenReturn(product.getPrice());
+        when(repository.countProducts()).thenReturn(1L);
+        when(repository.findByQuantity(0)).thenReturn(outOfStock);
 
         Map<String, Object> result = service.getInventorySummary();
         List<Object> outOfStockProducts = Collections.singletonList(result.get("outOfStock"));
 
-        assertEquals(1, result.get("totalProducts"));
-        assertEquals(0, result.get("totalQuantity"));
-        assertEquals(1, outOfStockProducts.size());
-        verify(repository, times(1)).findAll();
+        assertEquals(1L, result.get("totalProducts"));
+        assertEquals(0L, result.get("totalQuantity"));
+        assertEquals(outOfStock.size(), outOfStockProducts.size());
+
+        verify(repository, times(1)).findByQuantity(0);
+        verify(repository, times(1)).sumQuantities();
+        verify(repository, times(1)).countProducts();
+        verify(repository, times(1)).averagePrice();
+
     }
 }
 
