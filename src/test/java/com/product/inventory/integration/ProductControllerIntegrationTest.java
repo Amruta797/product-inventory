@@ -18,8 +18,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -56,7 +58,7 @@ public class ProductControllerIntegrationTest {
 
     @Test
     void testCreateProduct() throws Exception {
-        Product product = new Product("Phone", 10, 500.00);
+        Product product = new Product("Phone", 10, new BigDecimal("500.00"));
 
         ResultActions resultActions = mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +69,7 @@ public class ProductControllerIntegrationTest {
 
     @Test
     void testCreateProduct_validationException() throws Exception {
-        Product product = new Product("Phone", 10, 0.0);
+        Product product = new Product("Phone", 10, new BigDecimal("0.0"));
 
         ResultActions result = mockMvc.perform(post("/products")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +80,7 @@ public class ProductControllerIntegrationTest {
 
     @Test
     void testGetAllProducts() throws Exception {
-        repository.save(new Product("Laptop", 5, 1000.0));
+        repository.save(new Product("Laptop", 5, new BigDecimal("1000.0")));
 
         ResultActions result = mockMvc.perform(get("/products"));
         String response = result.andReturn().getResponse().getContentAsString();
@@ -89,7 +91,7 @@ public class ProductControllerIntegrationTest {
 
     @Test
     void testUpdateQuantity_success() throws Exception {
-        Product saved = repository.save(new Product("TV", 3, 800.0));
+        Product saved = repository.save(new Product("TV", 3, new BigDecimal("800.0")));
 
         ResultActions result = mockMvc.perform(put("/products/" + saved.getId() + "/quantity?quantity=7"));
         String response = result.andReturn().getResponse().getContentAsString();
@@ -105,8 +107,15 @@ public class ProductControllerIntegrationTest {
     }
 
     @Test
+    void testUpdateQuantity_invalidQuantity() throws Exception {
+        mockMvc.perform(put("/products/" + 3000L + "/quantity?quantity=-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Quantity must be greater than or equal to 0")));
+    }
+
+    @Test
     void testDeleteProduct() throws Exception {
-        Product saved = repository.save(new Product("Camera", 2, 700.0));
+        Product saved = repository.save(new Product("Camera", 2, new BigDecimal("700.0")));
 
         mockMvc.perform(delete("/products/" + saved.getId()))
                 .andExpect(status().isOk());
@@ -120,13 +129,32 @@ public class ProductControllerIntegrationTest {
 
     @Test
     void testInventorySummary() throws Exception {
-        repository.save(new Product("Laptop", 0, 1000.0));
+        repository.save(new Product("Laptop", 0, new BigDecimal("1000.0")));
 
         ResultActions result = mockMvc.perform(get("/products/summary"));
         String response = result.andReturn().getResponse().getContentAsString();
 
         result.andExpect(status().isOk());
         assertThat(response.contains("averagePrice")).isTrue();
+    }
+
+    @Test
+    void testSearchByName_Success() throws Exception {
+        repository.save(new Product("Laptop", 0, new BigDecimal("1000.0")));
+
+        ResultActions result = mockMvc.perform(get("/products/search?name=lap"));
+        String response = result.andReturn().getResponse().getContentAsString();
+
+        result.andExpect(status().isOk());
+        assertThat(response.contains("Laptop")).isTrue();
+    }
+
+    @Test
+    void testSearchByName_invalidString() throws Exception {
+        repository.save(new Product("Laptop", 0, new BigDecimal("1000.0")));
+        mockMvc.perform(get("/products/search?name=  "))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Name must not be blank")));
     }
 
     private void assertValidationException(ResultActions resultActions, String msg) throws UnsupportedEncodingException {

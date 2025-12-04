@@ -11,6 +11,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class ProductServiceIntegrationTest {
 
     @Test
     void testCreateProduct() {
-        Product p = new Product("TV", 2, 900.0);
+        Product p = new Product("TV", 2, new BigDecimal("900.0"));
         Product saved = service.createProduct(p);
         assertThat(saved.getName()).isEqualTo(p.getName());
     }
@@ -48,7 +49,7 @@ public class ProductServiceIntegrationTest {
     @Test
     void testUpdateQuantity_success() {
         int updatedQuantity = 5;
-        Product p = new Product("Keyboard", 10, 100.0);
+        Product p = new Product("Keyboard", 10, new BigDecimal("100.0"));
         Product saved = service.createProduct(p);
         Product updated = service.updateQuantity(saved.getId(), updatedQuantity);
         assertThat(updated.getQuantity()).isEqualTo(updatedQuantity);
@@ -64,7 +65,7 @@ public class ProductServiceIntegrationTest {
 
     @Test
     void testDelete_success() {
-        Product p = new Product("CPU", 100, 1000.0);
+        Product p = new Product("CPU", 100, new BigDecimal("1000.0"));
         service.createProduct(p);
         service.deleteProduct(p.getId());
         assertThatNoException();
@@ -79,16 +80,16 @@ public class ProductServiceIntegrationTest {
 
     @Test
     void testSearchByName() {
-        service.createProduct(new Product("Washing machine", 100, 1000.0));
-        service.createProduct(new Product("machine", 20, 900.0));
-        service.createProduct(new Product("Lathe Machine", 10, 800.0));
+        service.createProduct(new Product("Washing machine", 100, new BigDecimal("1000.0")));
+        service.createProduct(new Product("machine", 20, new BigDecimal("900.0")));
+        service.createProduct(new Product("Lathe Machine", 10, new BigDecimal("800.0")));
         List<Product> matchingProducts = service.searchByName("machine");
         assertThat(matchingProducts.size()).isEqualTo(3);
     }
 
     @Test
     void testGetSummary() {
-        service.createProduct(new Product("Refrigerator", 0, 1000.0));
+        service.createProduct(new Product("Refrigerator", 0, new BigDecimal("1000.0")));
         Map<String, Object> summary = service.getInventorySummary();
 
         List<Object> outOfStockProducts = Collections.singletonList(summary.get("outOfStock"));

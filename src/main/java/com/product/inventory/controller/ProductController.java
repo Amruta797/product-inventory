@@ -6,12 +6,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/products")
+@Validated
 public class ProductController {
 
     private final ProductService productService;
@@ -29,7 +31,8 @@ public class ProductController {
 
     // POST /products – Add new product to the inventory
     @Operation(summary = "Create a new product")
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Product created"),
+    @ApiResponses(value =
+            {@ApiResponse(responseCode = "201", description = "Product created"),
             @ApiResponse(responseCode = "400", description = "Validation error")})
     @PostMapping
     public ResponseEntity<Product> addNewProduct(@Valid @RequestBody Product product) {
@@ -47,27 +50,33 @@ public class ProductController {
 
     // GET /products/search?name=xyz – Search products by name (case-insensitive)
     @Operation(summary = "Search products by name (case-insensitive)")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Search is successful"),
-            @ApiResponse(responseCode = "400", description = "Validation error")})
+    @ApiResponses(value =
+            {@ApiResponse(responseCode = "200", description = "Search is successful"),
+            @ApiResponse(responseCode = "400", description = "Name must not be blank")})
     @GetMapping("/search")
-    public ResponseEntity<List<Product>> searchProduct(@Valid @RequestParam String name) {
+    public ResponseEntity<List<Product>> searchProduct(@RequestParam
+                           @NotBlank(message = "Name must not be blank") String name) {
         return ResponseEntity.ok(productService.searchByName(name));
     }
 
     // PUT /products/{id}/quantity?quantity=${quantity} – Update product quantity
     @Operation(summary = "Update quantity for given product")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Update is successful"),
-            @ApiResponse(responseCode = "400", description = "Validation error"),
+    @ApiResponses(value =
+            {@ApiResponse(responseCode = "200", description = "Update is successful"),
+            @ApiResponse(responseCode = "400", description = "Quantity must be greater than or equal to 0"),
             @ApiResponse(responseCode = "404", description = "Product not found")})
     @PutMapping("/{id}/quantity")
-    public ResponseEntity<Product> updateProductQuantity(@PathVariable Long id, @RequestParam Integer quantity) {
+    public ResponseEntity<Product> updateProductQuantity(@PathVariable Long id,
+                         @RequestParam @PositiveOrZero(message = "Quantity must be greater than or equal to 0")
+                         Integer quantity) {
         Product updated = productService.updateQuantity(id, quantity);
         return ResponseEntity.ok(updated);
     }
 
     // DELETE /products/{id} – Delete product
     @Operation(summary = "Delete product")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Delete is successful"),
+    @ApiResponses(value =
+            {@ApiResponse(responseCode = "200", description = "Delete is successful"),
             @ApiResponse(responseCode = "404", description = "Product not found")})
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {

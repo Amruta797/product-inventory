@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -20,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Long sumQuantities();
 
     @Query("SELECT AVG(p.price) FROM Product p")
-    Double averagePrice();
+    BigDecimal averagePrice();
 
     @Query("SELECT p.id AS id, p.name AS name FROM Product p WHERE p.quantity = 0")
     List<OutOfStockProduct> findByQuantity(int quantity);

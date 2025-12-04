@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Setter
 @Getter
 @NotNull
@@ -30,9 +32,9 @@ public class Product {
     @Schema(description = "Price of the product.", example = "767.46", required = true)
     @NotNull(message = "Price can not be null")
     @Positive(message = "Price must be positive")
-    private Double price;
+    private BigDecimal price;
 
-    public Product(String name, int quantity, double price) {
+    public Product(String name, int quantity, BigDecimal price) {
         this.name = name;
         this.quantity = quantity;
         this.price = price;

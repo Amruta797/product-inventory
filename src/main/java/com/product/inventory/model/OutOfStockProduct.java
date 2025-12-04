@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class OutOfStockProduct {
-    private long id;
+    private Long id;
     private String name;
 }
 

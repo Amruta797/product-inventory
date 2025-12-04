@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +27,7 @@ public class ProductServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        product = new Product("Laptop", 0, 1200.00);
+        product = new Product("Laptop", 0, new BigDecimal("1200.00"));
         product.setId(1L);
     }
 
@@ -122,7 +123,7 @@ public class ProductServiceTest {
         List<Object> outOfStockProducts = Collections.singletonList(result.get("outOfStock"));
 
         assertEquals(1L, result.get("totalProducts"));
-        assertEquals(0L, result.get("totalQuantity"));
+        assertEquals(0, result.get("totalQuantity"));
         assertEquals(outOfStock.size(), outOfStockProducts.size());
 
         verify(repository, times(1)).findByQuantity(0);

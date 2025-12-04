@@ -11,6 +11,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class ProductRepositoryIntegrationTest {
 
     @Test
     void testSaveAndFind() {
-        Product p = new Product("Laptop", 4, 1200.0);
+        Product p = new Product("Laptop", 4, new BigDecimal("1200.0"));
         Product saved = repository.save(p);
 
         assertThat(saved.getId()).isNotNull();
@@ -46,8 +47,8 @@ public class ProductRepositoryIntegrationTest {
 
     @Test
     void testFindByNameIgnoreCase() {
-        repository.save(new Product("Laptop", 5, 1200.0));
-        repository.save(new Product("laptop",6,  1100.0));
+        repository.save(new Product("Laptop", 5, new BigDecimal("1200.0")));
+        repository.save(new Product("laptop",6,  new BigDecimal("1100.0")));
 
         List<Product> products = repository.findByNameContainingIgnoreCase("LAP");
         assertThat(products).hasSize(2);
@@ -55,7 +56,7 @@ public class ProductRepositoryIntegrationTest {
 
     @Test
     void testSaveAndDelete() {
-        Product p = new Product("Monitor", 10, 120.0);
+        Product p = new Product("Monitor", 10, new BigDecimal("120.0"));
         Product saved = repository.save(p);
 
         assertThat(saved.getId()).isNotNull();
@@ -67,12 +68,13 @@ public class ProductRepositoryIntegrationTest {
 
     @Test
     void testUpdate() {
-        Product p = new Product("Laptop", 10, 120.0);
+        Product p = new Product("Laptop", 10, new BigDecimal("120.0"));
         repository.save(p);
         p.setQuantity(0);
         repository.save(p);
 
         Optional<Product> updated = repository.findById(p.getId());
+        assertThat(updated).isPresent();
         assertEquals(0, updated.get().getQuantity());
     }
 }
