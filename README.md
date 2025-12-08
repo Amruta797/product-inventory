@@ -28,15 +28,19 @@
 
 ## Build Project using docker
   * Go to project directory on Terminal or Git Bash on your machine
-  * Execute below command to build the project
-    * docker compose build
+    * Execute below command to build the project
+      '''
+        docker compose build
+      '''
     * This will download maven and java (version specified in Dockerfile)
     * Also all the required maven dependencies will be downloaded
     * This will further generate the "inventory-0.0.1-SNAPSHOT.jar" in target folder
 
 ## Run Project using docker
   * Once project is built, hit below command in terminal to run the project
-    * docker compose up
+    '''
+        docker compose up
+    '''
   * This will start postgreSQL service and product-inventory service
   * Both services will be executed in same network created by docker so that they can communicate with each other
   * You can see "Inventory Application has been started" message on console log when application starts running successfully
@@ -44,8 +48,8 @@
 
 # REST endpoints
   * Get all products : http://localhost:8080/products
-  * Add new product : http://localhost:8080/products with Request parameter
-  * Update product quantity : http://localhost:8080/products/${id}/quantity?quantity=${newValue}
+  * Add new product : http://localhost:8080/products with Request body for product
+  * Update product quantity : http://localhost:8080/products/${id}/quantity with Request body for quantity
   * Search by Name : http://localhost:8080/products/search?name=xyz
   * Get inventory summary : http://localhost:8080/products/summary
 
@@ -75,8 +79,12 @@
   * response : Json response which contains newly added product
 
 ## Update product quantity
-  * command : curl -X PUT "http://localhost:8080/products/${id}/quantity?quantity=${value}"
-  * where id : product id, value : changed quantity
+  * command : curl -X PUT http://localhost:8080/products/${id}/quantity \
+                    -H "Content-Type: application/json" \
+                    -d '{
+                            "quantity": 2
+                        }'
+  * where id : product id and json object for updated quantity 
   * response : Json response with updated product
 
 ## Search by Name

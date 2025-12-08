@@ -1,6 +1,6 @@
 package com.product.inventory.service;
 
-import com.product.inventory.model.Product;
+import com.product.inventory.entity.Product;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

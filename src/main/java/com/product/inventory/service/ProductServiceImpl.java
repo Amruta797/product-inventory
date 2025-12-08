@@ -1,15 +1,15 @@
 package com.product.inventory.service;
 
+import com.product.inventory.dto.InventoryStats;
 import com.product.inventory.exception.ResourceNotFoundException;
-import com.product.inventory.model.OutOfStockProduct;
-import com.product.inventory.model.Product;
+import com.product.inventory.dto.OutOfStockProduct;
+import com.product.inventory.entity.Product;
 import com.product.inventory.repositoty.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,23 +104,20 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Map<String, Object> getInventorySummary() {
-        long totalProducts = repo.countProducts();
-        long totalQuantity = repo.sumQuantities();
-        BigDecimal averagePrice = repo.averagePrice();
         List<OutOfStockProduct> outOfStock = repo.findByQuantity(0);
-
-        return generateSummaryMap(totalProducts, totalQuantity, averagePrice, outOfStock);
+        InventoryStats stats = repo.getInventoryStatistics();
+        return generateSummaryMap(stats, outOfStock);
     }
 
     /**
      * Creates summary map from given parameters
      */
-    private Map<String, Object> generateSummaryMap(long totalProducts, long totalQuantity, BigDecimal averagePrice,
+    private Map<String, Object> generateSummaryMap(InventoryStats stats,
                                                    List<OutOfStockProduct> outOfStock) {
         Map<String, Object> summary = new HashMap<>();
-        summary.put("totalProducts", totalProducts);
-        summary.put("totalQuantity", totalQuantity);
-        summary.put("averagePrice", averagePrice);
+        summary.put("totalProducts", stats.getTotalProducts());
+        summary.put("totalQuantity", stats.getTotalQuantity());
+        summary.put("averagePrice", stats.getAveragePrice());
         summary.put("outOfStock", outOfStock);
         return summary;
     }

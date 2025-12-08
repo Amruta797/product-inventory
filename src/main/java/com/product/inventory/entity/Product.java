@@ -1,4 +1,4 @@
-package com.product.inventory.model;
+package com.product.inventory.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;

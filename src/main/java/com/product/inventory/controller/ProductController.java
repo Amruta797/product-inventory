@@ -1,6 +1,7 @@
 package com.product.inventory.controller;
 
-import com.product.inventory.model.Product;
+import com.product.inventory.dto.UpdateQuantityRequest;
+import com.product.inventory.entity.Product;
 import com.product.inventory.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -60,7 +61,7 @@ public class ProductController {
     }
 
     // PUT /products/{id}/quantity?quantity=${quantity} – Update product quantity
-    @Operation(summary = "Update quantity for given product")
+    /**@Operation(summary = "Update quantity for given product")
     @ApiResponses(value =
             {@ApiResponse(responseCode = "200", description = "Update is successful"),
             @ApiResponse(responseCode = "400", description = "Quantity must be greater than or equal to 0"),
@@ -71,17 +72,30 @@ public class ProductController {
                          Integer quantity) {
         Product updated = productService.updateQuantity(id, quantity);
         return ResponseEntity.ok(updated);
+    }*/
+
+    @Operation(summary = "Update quantity for given product")
+    @ApiResponses(value =
+            {@ApiResponse(responseCode = "200", description = "Update is successful"),
+                    @ApiResponse(responseCode = "400", description = "Quantity must be greater than or equal to 0"),
+                    @ApiResponse(responseCode = "404", description = "Product not found")})
+    @PutMapping("/{id}/quantity")
+    public ResponseEntity<Product> updateQuantity(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateQuantityRequest request
+    ) {
+        Product updated = productService.updateQuantity(id, request.quantity());
+        return ResponseEntity.ok(updated);
     }
 
     // DELETE /products/{id} – Delete product
     @Operation(summary = "Delete product")
     @ApiResponses(value =
-            {@ApiResponse(responseCode = "200", description = "Delete is successful"),
-            @ApiResponse(responseCode = "404", description = "Product not found")})
+            {@ApiResponse(responseCode = "204", description = "Deletion Successful")})
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return ResponseEntity.ok("Product deleted Successfully");
+        return ResponseEntity.noContent().build(); // 204
     }
 
     // GET /products/summary – Inventory statistics

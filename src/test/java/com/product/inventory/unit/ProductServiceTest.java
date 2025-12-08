@@ -1,7 +1,8 @@
 package com.product.inventory.unit;
 
-import com.product.inventory.model.OutOfStockProduct;
-import com.product.inventory.model.Product;
+import com.product.inventory.dto.InventoryStats;
+import com.product.inventory.dto.OutOfStockProduct;
+import com.product.inventory.entity.Product;
 import com.product.inventory.repositoty.ProductRepository;
 import com.product.inventory.service.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -113,10 +114,9 @@ public class ProductServiceTest {
     public void testGetSummary() {
         List<OutOfStockProduct> outOfStock = new ArrayList<>();
         outOfStock.add(new OutOfStockProduct(1L, "Laptop"));
-
-        when(repository.sumQuantities()).thenReturn(Long.valueOf(product.getQuantity()));
-        when(repository.averagePrice()).thenReturn(product.getPrice());
-        when(repository.countProducts()).thenReturn(1L);
+        InventoryStats stats =
+                new TestInventoryStats(1L, product.getQuantity(), product.getPrice());
+        when(repository.getInventoryStatistics()).thenReturn(stats);
         when(repository.findByQuantity(0)).thenReturn(outOfStock);
 
         Map<String, Object> result = service.getInventorySummary();
@@ -127,10 +127,7 @@ public class ProductServiceTest {
         assertEquals(outOfStock.size(), outOfStockProducts.size());
 
         verify(repository, times(1)).findByQuantity(0);
-        verify(repository, times(1)).sumQuantities();
-        verify(repository, times(1)).countProducts();
-        verify(repository, times(1)).averagePrice();
-
+        verify(repository, times(1)).getInventoryStatistics();
     }
 }
 

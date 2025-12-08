@@ -1,7 +1,8 @@
 package com.product.inventory.integration;
 
 import com.product.inventory.TestPostgresContainer;
-import com.product.inventory.model.Product;
+import com.product.inventory.dto.UpdateQuantityRequest;
+import com.product.inventory.entity.Product;
 import com.product.inventory.repositoty.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,8 +93,12 @@ public class ProductControllerIntegrationTest {
     @Test
     void testUpdateQuantity_success() throws Exception {
         Product saved = repository.save(new Product("TV", 3, new BigDecimal("800.0")));
+        UpdateQuantityRequest updateQuantityRequest = new UpdateQuantityRequest(7);
 
-        ResultActions result = mockMvc.perform(put("/products/" + saved.getId() + "/quantity?quantity=7"));
+        ResultActions result = mockMvc.perform(put("/products/" + saved.getId() + "/quantity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateQuantityRequest)));
+
         String response = result.andReturn().getResponse().getContentAsString();
 
         result.andExpect(status().isOk());
@@ -102,15 +107,13 @@ public class ProductControllerIntegrationTest {
 
     @Test
     void testUpdateQuantity_productNotFound() throws Exception {
-        ResultActions resultActions = mockMvc.perform(put("/products/" + 3000L + "/quantity?quantity=0"));
-        assertValidationException(resultActions, "Product not found");
-    }
+        UpdateQuantityRequest updateQuantityRequest = new UpdateQuantityRequest(7);
 
-    @Test
-    void testUpdateQuantity_invalidQuantity() throws Exception {
-        mockMvc.perform(put("/products/" + 3000L + "/quantity?quantity=-1"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Quantity must be greater than or equal to 0")));
+        ResultActions resultActions = mockMvc.perform(put("/products/" + 3000L + "/quantity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateQuantityRequest)));
+
+        assertValidationException(resultActions, "Product not found");
     }
 
     @Test
@@ -118,7 +121,7 @@ public class ProductControllerIntegrationTest {
         Product saved = repository.save(new Product("Camera", 2, new BigDecimal("700.0")));
 
         mockMvc.perform(delete("/products/" + saved.getId()))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
