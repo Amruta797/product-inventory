@@ -19,28 +19,26 @@
 ## Get project from Git
   * Clone git project on your local machine
       * With git installed on your local machine, hit below command on terminal 
-        * git clone https://github.com/Amruta797/product-inventory.git
-      * Without git, you can also download zip folder for the code
-        * Go to https://github.com/Amruta797/product-inventory.git
-        * click on green button <> Code
-        * Hit Download zip button
-        * Unzip this folder
+        ```
+            git clone https://github.com/Amruta797/product-inventory.git
+        ```
+      * Without git, you can also download zip folder from above link
 
 ## Build Project using docker
   * Go to project directory on Terminal or Git Bash on your machine
     * Execute below command to build the project
-      '''
+      ```
         docker compose build
-      '''
+      ```
     * This will download maven and java (version specified in Dockerfile)
     * Also all the required maven dependencies will be downloaded
     * This will further generate the "inventory-0.0.1-SNAPSHOT.jar" in target folder
 
 ## Run Project using docker
   * Once project is built, hit below command in terminal to run the project
-    '''
+    ```
         docker compose up
-    '''
+    ```
   * This will start postgreSQL service and product-inventory service
   * Both services will be executed in same network created by docker so that they can communicate with each other
   * You can see "Inventory Application has been started" message on console log when application starts running successfully
@@ -65,41 +63,55 @@
 # Test using curl commands on Terminal
 
 ## Get all products
-  * command : curl -X GET "http://localhost:8080/products"
+  * 
+    ``` 
+    curl -X GET "http://localhost:8080/products" 
+    ```
   * response : Json response containing list of all products
 
 ## Add new product
-  * command : curl -X POST http://localhost:8080/products \
+  * ```
+     curl -X POST http://localhost:8080/products \
                     -H "Content-Type: application/json" \
                     -d '{
                             "name": "Laptop",
                             "price": 19.99,
                             "quantity": 2
-                        }'
+                        }' 
+    ```
   * response : Json response which contains newly added product
 
 ## Update product quantity
-  * command : curl -X PUT http://localhost:8080/products/${id}/quantity \
+  *  ```
+      curl -X PUT http://localhost:8080/products/${id}/quantity \
                     -H "Content-Type: application/json" \
                     -d '{
                             "quantity": 2
                         }'
+      ```
   * where id : product id and json object for updated quantity 
   * response : Json response with updated product
 
 ## Search by Name
-  * command : curl -X GET "http://localhost:8080/products/search?name=${name}"
+  * ```
+     curl -X GET "http://localhost:8080/products/search?name=${name}" 
+    ```
   * where name : full name or some part of name of the product that you want to search
   * response : Json response containing list of all matching products
 
 ## Get inventory summary
-  * command : curl -X GET "http://localhost:8080/products/summary"
-  * response : {
-                    "totalProducts": 5,
-                    "totalQuantity": 78,
-                    "averagePrice": 219.99,
-                    "outOfStock": [
-                            { "id": 3, "name": "Monitor" },
-                            { "id": 5, "name": "Keyboard" }
-                    ]
-                }
+  * ```
+    curl -X GET "http://localhost:8080/products/summary" 
+    ```
+  * response : 
+      ``` 
+      {
+          "totalProducts": 5,
+          "totalQuantity": 78,
+          "averagePrice": 219.99,
+          "outOfStock": [
+                  { "id": 3, "name": "Monitor" },
+                  { "id": 5, "name": "Keyboard" }
+          ]
+      } 
+    ```
