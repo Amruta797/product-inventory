@@ -1,4 +1,4 @@
-package com.product.inventory;
+package com.product.inventory.integration;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 

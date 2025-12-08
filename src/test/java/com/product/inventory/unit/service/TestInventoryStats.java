@@ -1,4 +1,4 @@
-package com.product.inventory.unit;
+package com.product.inventory.unit.service;
 
 import com.product.inventory.dto.InventoryStats;
 

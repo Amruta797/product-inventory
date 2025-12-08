@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PositiveOrZero;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -59,20 +58,6 @@ public class ProductController {
                            @NotBlank(message = "Name must not be blank") String name) {
         return ResponseEntity.ok(productService.searchByName(name));
     }
-
-    // PUT /products/{id}/quantity?quantity=${quantity} – Update product quantity
-    /**@Operation(summary = "Update quantity for given product")
-    @ApiResponses(value =
-            {@ApiResponse(responseCode = "200", description = "Update is successful"),
-            @ApiResponse(responseCode = "400", description = "Quantity must be greater than or equal to 0"),
-            @ApiResponse(responseCode = "404", description = "Product not found")})
-    @PutMapping("/{id}/quantity")
-    public ResponseEntity<Product> updateProductQuantity(@PathVariable Long id,
-                         @RequestParam @PositiveOrZero(message = "Quantity must be greater than or equal to 0")
-                         Integer quantity) {
-        Product updated = productService.updateQuantity(id, quantity);
-        return ResponseEntity.ok(updated);
-    }*/
 
     @Operation(summary = "Update quantity for given product")
     @ApiResponses(value =

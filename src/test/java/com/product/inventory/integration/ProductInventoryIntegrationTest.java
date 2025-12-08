@@ -1,6 +1,5 @@
 package com.product.inventory.integration;
 
-import com.product.inventory.TestPostgresContainer;
 import com.product.inventory.dto.UpdateQuantityRequest;
 import com.product.inventory.entity.Product;
 import com.product.inventory.repositoty.ProductRepository;
@@ -30,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Testcontainers
 @AutoConfigureMockMvc
-public class ProductControllerIntegrationTest {
+public class ProductInventoryIntegrationTest {
 
     @Container
     public static TestPostgresContainer postgres = TestPostgresContainer.getInstance();

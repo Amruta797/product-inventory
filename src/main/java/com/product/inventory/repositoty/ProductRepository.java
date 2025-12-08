@@ -14,7 +14,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByNameContainingIgnoreCase(String name);
 
-    //@Query("SELECT p.id AS id, p.name AS name FROM Product p WHERE p.quantity = 0")
     // In repository - direct DTO instantiation
     @Query("SELECT new com.product.inventory.dto.OutOfStockProduct(p.id, p.name) " +
             "FROM Product p WHERE p.quantity = 0")
