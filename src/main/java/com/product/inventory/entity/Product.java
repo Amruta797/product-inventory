@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @Entity
 @NoArgsConstructor
 public class Product {
+    @Schema(hidden = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
