@@ -1,6 +1,8 @@
 package com.product.inventory.unit.controller;
 
 import com.product.inventory.controller.ProductController;
+import com.product.inventory.dto.ProductRequest;
+import com.product.inventory.dto.ProductResponse;
 import com.product.inventory.dto.UpdateQuantityRequest;
 import com.product.inventory.entity.Product;
 import com.product.inventory.service.ProductService;
@@ -38,8 +40,9 @@ class ProductControllerTest {
     @Test
     void testAddNewProduct_returns201() throws Exception {
         Product product = new Product("Laptop", 10, new BigDecimal(1299.99));
-        Mockito.when(productService.createProduct(any(Product.class)))
-                .thenReturn(product);
+        ProductResponse response = new ProductResponse(1L, product.getName(), product.getQuantity(), product.getPrice());
+        Mockito.when(productService.createProduct(any(ProductRequest.class)))
+                .thenReturn(response);
 
         mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -50,9 +53,9 @@ class ProductControllerTest {
 
     @Test
     void testGetAllProducts_returns200() throws Exception {
-        List<Product> list = List.of(
-                new Product("Laptop", 10, new BigDecimal(1299.99)),
-                new Product("Mouse", 5, new BigDecimal(20.99))
+        List<ProductResponse> list = List.of(
+                new ProductResponse(1L, "Laptop", 10, new BigDecimal(1299.99)),
+                new ProductResponse(2L, "Mouse", 5, new BigDecimal(20.99))
         );
 
         Mockito.when(productService.getAllProducts(any(PageRequest.class)))
@@ -65,7 +68,7 @@ class ProductControllerTest {
 
     @Test
     void testSearchProduct_returns200() throws Exception {
-        List<Product> list = List.of(new Product("Laptop", 10, new BigDecimal(1299.99)));
+        List<ProductResponse> list = List.of(new ProductResponse(1L, "Laptop", 10, new BigDecimal(1299.99)));
 
         Mockito.when(productService.searchByName("Laptop"))
                 .thenReturn(list);
@@ -85,7 +88,7 @@ class ProductControllerTest {
 
     @Test
     void testUpdateQuantity_returns200() throws Exception {
-        Product updated = new Product("Laptop", 20, new BigDecimal(1299.99));
+        ProductResponse updated = new ProductResponse(1L, "Laptop", 20, new BigDecimal(1299.99));
 
         Mockito.when(productService.updateQuantity(eq(1L), eq(20)))
                 .thenReturn(updated);

@@ -1,7 +1,8 @@
 package com.product.inventory.controller;
 
+import com.product.inventory.dto.ProductRequest;
+import com.product.inventory.dto.ProductResponse;
 import com.product.inventory.dto.UpdateQuantityRequest;
-import com.product.inventory.entity.Product;
 import com.product.inventory.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,16 +36,15 @@ public class ProductController {
             {@ApiResponse(responseCode = "201", description = "Product created"),
             @ApiResponse(responseCode = "400", description = "Validation error")})
     @PostMapping
-    public ResponseEntity<Product> addNewProduct(@Valid @RequestBody Product product) {
-        Product createdProduct = productService.createProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+    public ResponseEntity<ProductResponse> addNewProduct(@Valid @RequestBody ProductRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(request));
     }
 
     // GET /products – Get all products in inventory
     @Operation(summary = "Get list of all Products in pages in Inventory")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "List is Returned")})
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts(@ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ProductResponse>> getAllProducts(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 
@@ -54,7 +54,7 @@ public class ProductController {
             {@ApiResponse(responseCode = "200", description = "Search is successful"),
             @ApiResponse(responseCode = "400", description = "Name must not be blank")})
     @GetMapping("/search")
-    public ResponseEntity<List<Product>> searchProduct(@RequestParam
+    public ResponseEntity<List<ProductResponse>> searchProduct(@RequestParam
                            @NotBlank(message = "Name must not be blank") String name) {
         return ResponseEntity.ok(productService.searchByName(name));
     }
@@ -65,11 +65,11 @@ public class ProductController {
                     @ApiResponse(responseCode = "400", description = "Quantity must be greater than or equal to 0"),
                     @ApiResponse(responseCode = "404", description = "Product not found")})
     @PutMapping("/{id}/quantity")
-    public ResponseEntity<Product> updateQuantity(
+    public ResponseEntity<ProductResponse> updateQuantity(
             @PathVariable Long id,
             @Valid @RequestBody UpdateQuantityRequest request
     ) {
-        Product updated = productService.updateQuantity(id, request.quantity());
+        ProductResponse updated = productService.updateQuantity(id, request.quantity());
         return ResponseEntity.ok(updated);
     }
 

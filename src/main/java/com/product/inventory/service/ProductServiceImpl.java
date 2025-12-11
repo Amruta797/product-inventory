@@ -1,11 +1,12 @@
 package com.product.inventory.service;
 
 import com.product.inventory.dto.InventoryStats;
+import com.product.inventory.dto.ProductRequest;
+import com.product.inventory.dto.ProductResponse;
 import com.product.inventory.exception.ResourceNotFoundException;
 import com.product.inventory.dto.OutOfStockProduct;
 import com.product.inventory.entity.Product;
 import com.product.inventory.repositoty.ProductRepository;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
@@ -27,24 +28,28 @@ public class ProductServiceImpl implements ProductService {
         this.repo = repo;
     }
 
+    private ProductResponse toResponse(Product p) {
+        return new ProductResponse(p.getId(), p.getName(), p.getQuantity(), p.getPrice());
+    }
+
     /**
      * Adds new product to the Inventory
      *
-     * @param product : new product
-     * @return : saved product
+     * @param productRequest : new product request
+     * @return : response for newly created product
      */
     @Override
-    public Product createProduct(Product product) {
-        return repo.save(product);
+    public ProductResponse createProduct(ProductRequest productRequest) {
+        Product product = productRequest.createProduct();
+        return toResponse(repo.save(product));
     }
 
     /**
      * @return All products in inventory
      */
     @Override
-    public List<Product> getAllProducts(Pageable pageable) {
-        Page<Product> page = repo.findAll(pageable);
-        return page.getContent();
+    public List<ProductResponse> getAllProducts(Pageable pageable) {
+        return repo.findAll(pageable).map(this::toResponse).getContent();
     }
 
     @Override
@@ -58,8 +63,8 @@ public class ProductServiceImpl implements ProductService {
      * @param name : product name to be searched for
      */
     @Override
-    public List<Product> searchByName(String name) {
-        return repo.findByNameContainingIgnoreCase(name);
+    public List<ProductResponse> searchByName(String name) {
+        return repo.findByNameContainingIgnoreCase(name).stream().map(this::toResponse).toList();
     }
 
     /**
@@ -69,10 +74,10 @@ public class ProductServiceImpl implements ProductService {
      * @param id : id of the product to be updated
      */
     @Override
-    public Product updateQuantity(Long id, Integer quantity) {
+    public ProductResponse updateQuantity(Long id, Integer quantity) {
         Product product = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         product.setQuantity(quantity);
-        return repo.save(product);
+        return toResponse(repo.save(product));
     }
 
     /**

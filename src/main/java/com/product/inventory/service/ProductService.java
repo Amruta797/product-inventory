@@ -1,6 +1,7 @@
 package com.product.inventory.service;
 
-import com.product.inventory.entity.Product;
+import com.product.inventory.dto.ProductRequest;
+import com.product.inventory.dto.ProductResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -8,15 +9,15 @@ import java.util.Map;
 
 public interface ProductService {
 
-    Product createProduct(Product product);
+    ProductResponse createProduct(ProductRequest productRequest);
 
-    List<Product> getAllProducts(Pageable pageable);
+    List<ProductResponse> getAllProducts(Pageable pageable);
 
     boolean existsById(Long id);
 
-    List<Product> searchByName(String name);
+    List<ProductResponse> searchByName(String name);
 
-    Product updateQuantity(Long id, Integer quantity);
+    ProductResponse updateQuantity(Long id, Integer quantity);
 
     void deleteProduct(Long id);
 
