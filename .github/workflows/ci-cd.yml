@@ -35,6 +35,6 @@ jobs:
       with:
         registry_url: docker.io
         repository_name: amrutag1234/product-inventory
-        user_name: ${{secrets.DOCKER_USERNAME}
-        password: ${{secrets.DOCKER_PASSWORD}
+        user_name: ${{secrets.DOCKER_USERNAME}}
+        password: ${{secrets.DOCKER_PASSWORD}}
         image_version: 1.0
